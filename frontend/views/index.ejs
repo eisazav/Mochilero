@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>
+      HikersApp</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <div class="container">
+      <div class="title">
+        <h1>Hiker App</h1>
+        <h2>Give your minimum calories and maximum weight</h2>
+      </div>
+      <div class="main">  	
+          <div class="signup">
+            <form>
+              <label for="chk" aria-hidden="true">Write your specs:</label>
+              <input type="text" id="name" name="name" placeholder="Your Name">
+              <input type="number" id="weight" name="weight" placeholder="Minimum Weight">
+              <input type="number" id="calories" name="calories" placeholder="Maximum Calories">
+              <button id="btnSend">Search perfect Hiker elements for you</button>
+            </form>
+          </div>
+      </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+	<script>
+		const errMsg = {'error': 'Hubo un error calculando', 'noPosible': 'No hay elemento perfectos para ti'};
+		$(document).ready(() => {	  
+		  $('#btnSend').click(() => {
+        calculate();
+		  })
+    })
+		const calculate = () => {
+		  $('#msg').text('');
+		  $('#btnSend')
+			.attr('disabled','disabled')
+			.text('Calculating perfect hiker elements for you...');
+		  $.ajax({
+			url: '/calculate',
+			headers: { "Content-Type": "application/json" },
+			type: 'POST',
+			data: JSON.stringify({'name': $('#name').val(), 'weight': $('#weight').val(), 'calories': $('#calories').val()}) 
+		  }).done((r) => {
+			console.log("oliwi");
+			//console.log(JSON.stringify({'name': $('#name').val(), 'weight': $('#weight').val(), 'calories': $('#calories').val()}));
+			if(r.err) {
+			  if (r.err == 'error') return showAlert(errMsg.error); 
+        if (r.err == 'noPosible') return showAlert(errMsg.noPosible); 
+			} 
+			else window.location.href = `/pass?data=${JSON.stringify(r.data)}`;
+		  })
+		}
+	
+		const showAlert = (msg) => {
+		  $('#btnSend')
+			.removeAttr('disabled')
+			.text('Ingresar');
+		  alert(msg);
+		}
+	  </script>
+  </body>
+</html>
